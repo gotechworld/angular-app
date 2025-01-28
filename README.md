@@ -57,3 +57,8 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+
+
+</br>
+
+[![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=gotechworld_angular-app)](https://sonarcloud.io/summary/new_code?id=gotechworld_angular-app)

@@ -1,21 +1,28 @@
-# Stage 1: Build the Angular app
-FROM node:current-alpine3.20 as build-stage
-# Set the working directory inside the container
+# Step 1: We build the angular app using the production config
+FROM node:latest AS build
+# Set the working directory
 WORKDIR /app
-# Copy package.json and package-lock.json for installing dependencies
+# Copy the package.json and package-lock.json files
 COPY package*.json ./
-# Install the dependencies defined in package.json
+# Run a clean install of the dependencies
 RUN npm ci
-# Copy the rest of the application code to the container
+# Install Angular CLI globally
+RUN npm install -g @angular/cli
+# Copy all files
 COPY . .
-# Build the Angular application for production
-RUN npm run build --prod
+# Build the application
+RUN npm run build --configuration=production
 
-# Stage 2: Serve the app with Nginx
-FROM nginx:stable-alpine3.20-perl as start-stage
-# Copy the built Angular app from the build stage to the Nginx html directory
-COPY --from=build-stage /app/dist/angular-app /usr/share/nginx/html
-# Expose port 80 for the Nginx server
+# Step 2: We use the nginx image to serve the application
+FROM nginx:latest
+
+# Copy the build output to replace the default nginx contents
+COPY ./nginx.conf /etc/nginx/conf.d/default.conf
+# Copy the build output to replace the default nginx contents
+COPY --from=build /app/dist/angular/browser /usr/share/nginx/html
+
+# Expose port 80
 EXPOSE 80
-# Run Nginx in the foreground (default command)
-CMD ["nginx", "-g", "daemon off;"]
+
+# Build: docker image build --no-cache -t angular .
+# Run: docker container run -d -p 8080:80 angular
